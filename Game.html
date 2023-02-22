@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>石头剪刀布游戏</title>
+</head>
+<body>
+  <h1>石头剪刀布游戏</h1>
+  <h2>请选择</h2>
+  <button id="rock">石头</button>
+  <button id="scissors">剪刀</button>
+  <button id="paper">布</button>
+  <button id="cheat">作弊模式</button>
+  <h2>历史记录</h2>
+  <ul id="history"></ul>
+  <h2>得分</h2>
+  <p>本局得分：<span id="score">0</span></p>
+  <p>总得分：<span id="totalScore">0</span></p>
+  <p>平均得分：<span id="averageScore">0</span></p>
+
+  <script>
+    const choices = ["石头", "剪刀", "布"];
+    let history = [];
+    let score = 0;
+    let totalScore = 0;
+
+    function updateScore() {
+      const scoreEl = document.getElementById("score");
+      const totalScoreEl = document.getElementById("totalScore");
+      const averageScoreEl = document.getElementById("averageScore");
+      scoreEl.textContent = score;
+      totalScoreEl.textContent = totalScore;
+      averageScoreEl.textContent = (totalScore / history.length).toFixed(2);
+    }
+
+    function play(playerChoice) {
+      const computerChoice = Math.floor(Math.random() * 3);
+      let result;
+      if (playerChoice === 4) {
+        // 作弊模式
+        result = "玩家获胜";
+      } else if (playerChoice === computerChoice) {
+        result = "平局";
+      } else if (playerChoice === 0 && computerChoice === 1 ||
+                 playerChoice === 1 && computerChoice === 2 ||
+                 playerChoice === 2 && computerChoice === 0) {
+        result = "玩家获胜";
+        score++;
+      } else {
+        result = "电脑获胜";
+        score--;
+      }
+
+      // 保存历史记录
+      const historyEl = document.getElementById("history");
+      if (history.length >= 50) {
+        history.shift();
+      }
+      history.push({player: choices[playerChoice], computer: choices[computerChoice], result: result});
+      historyEl.innerHTML = "";
+      history.forEach(item => {
+        const li = document.createElement("li");
+        li.textContent = `${item.player} vs ${item.computer}: ${item.result}`;
+        historyEl.appendChild(li);
+      });
+
+      totalScore += score;
+      score = 0;
+      updateScore();
+    }
+
+    const rockBtn = document.getElementById("rock");
+    const scissorsBtn = document.getElementById("scissors");
+    const paperBtn = document.getElementById("paper");
+    const cheatBtn = document.getElementById("cheat");
+
+    rockBtn.addEventListener("click", function() {
+      play(0);
+    });
+
+    scissorsBtn.addEventListener("click", function() {
+      play(1);
+    });
+
+    paperBtn.addEventListener("click", function() {
+      play(2);
+    });
+
+    cheatBtn.addEventListener("click", function() {
+      play(4);
+    });
+  </script>
+</body>
+</html>
